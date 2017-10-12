@@ -1,54 +1,97 @@
 package edu.cuny.csi.csc330.lab2;
 
-import java.util.ArrayList;//built in
-import java.util.Collections;//built in 
+import java.util.Arrays;
 
-	public abstract class NumericAnalyzer implements Runnable // implemented class
-	{
+public class NumericAnalyzer {
+	
+	
+	private int size, average, median, min , max, sum, range; 
+	private double variance=0, deviation;
+	private int varianceVariable, varianceSum;		//only used for variance
+	private int [] intArr;
+	
+	
+	public NumericAnalyzer(String[] arry) {
+							
+		int arrSize = arry.length;
+		intArr = new int[arrSize];
+		
+		for(int i = 0; i< arry.length;i++)			//converts command line arg into an array of ints
+			intArr[i] = Integer.valueOf(arry[i]);
+		
+		Arrays.sort(intArr);						//sorts the int array
+		
+		size = intArr.length;
+	}
 
-	public static void main(String[] args) throws Exception // driver method
-	{
-	ArrayList num = new ArrayList(); // array to save the arguments
-	int sum = 0, index, val = 0; // local variables
-	int avg;
-	if(args.length==0) {
-		System.out.println("System Error...Please try again" );
-		System.exit(1);
+	public void calculate() {
+	sum = 0;
+		
+	for(int i = 0; i< intArr.length;i++)
+			sum +=  intArr[i];
+	
+	average = sum/size;
+	
+	median = size/2;
+	median = intArr[median];
+	
+	min = intArr[0];
+	max = intArr[size-1];
+	
+	range = max-min;
+	
+	for(int i = 0; i < size; i++) {					//starts the calculation of the variance
+	
+		varianceVariable = intArr[i]-average;
+		varianceVariable = varianceVariable * varianceVariable;
+		variance = variance + varianceVariable;
+		
 	}
-	try // try catch exception
-	{
-	for (int i = 0; i < args.length; i++) // loop over the arguments
-	{
-	num.add(Integer.parseInt(args[i])); // reads data into the list
+	variance=variance/size;							//finishes the calculation of the variance
+	variance = Math.round(variance);				//rounds variance
+	
+	
+	deviation = Math.sqrt(variance);			
+	deviation = Math.round(deviation);				//rounds deviation
+	
+	
+		
 	}
-	Collections.sort(num); // sorts the data 
-	System.out.println(num.toString()); // prints the arguments in the screen sorted
-	System.out.println("Size : " + num.size()); // counts the size of the data
-	for (int j = 0; j < num.size(); j++)
-	{
-	sum = sum + (int) num.get(j); // adds up the arguments 
+	
+	
+	public void display() {
+		
+		
+		for(int i = 0; i< size;i++)
+			System.out.printf("%5s",intArr[i]);
+		
+		System.out.printf("\n%-30s %d", "Size:", size);
+		System.out.printf("\n%-30s %d", "Min:", min);
+		System.out.printf("\n%-30s %d", "Max:", max);
+		System.out.printf("\n%-30s %d", "Range:", range);
+		System.out.printf("\n%-30s %d","Sum:", sum);
+		System.out.printf("\n%-30s %d", "Mean:", average);
+		System.out.printf("\n%-30s %d","Median:", median);
+		System.out.printf("\n%-30s %f","Variance", variance);
+		System.out.printf("\n%-30s %f","Standard Deviation:", deviation);
 	}
-	avg = (int) sum / num.size(); // calculates the average value
-	int min = (int) Collections.min(num);// the minimum value
-	System.out.println("Min : " + min); 
-	int max = (int) Collections.max(num); // the maximum value
-	System.out.println("Max : " + max); 
-	System.out.println("Range : " + (max - min));
-	for (int k = 0; k < num.size(); k++)
-	{
-	val = (int) (val + Math.pow((avg - (int) num.get(k)), 2)); // the variance
+	
+	
+	
+	
+	public static void main(String[] args) {
+		
+		if(args.length == 0) {
+			System.out.printf("ERROR : No values were entered!");
+		
+			System.exit(1);
+		}
+		
+		NumericAnalyzer analyzer = new NumericAnalyzer(args);
+
+		analyzer.calculate();
+		analyzer.display();
+		
+		System.exit(0);
 	}
-	int variance =(int) val / num.size();
-	int standardD=(int) +Math.pow(variance, .5);
-	System.out.println("Sum : " + sum);
-	System.out.println("Mean : " + avg);
-	index = num.size() / 2; //gets the median index
-	System.out.println("Median : " + num.get(index));
-	System.out.println("Variance : " + variance);
-	System.out.println("Standard Deviation : " + standardD); //the standard deviation
-	} catch (Exception ex) 
-	{
-	throw new Exception(ex.toString()); 
-	}
-	}
-	}
+}
